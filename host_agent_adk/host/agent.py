@@ -25,9 +25,23 @@ from google.adk.sessions import InMemorySessionService
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types
 import nest_asyncio
+from arize.otel import register
+from openinference.instrumentation.google_adk import GoogleADKInstrumentor
 
-from .tools import book_pickleball_court, list_court_availabilities
-from .remote_agent_conn import RemoteAgentConnections
+
+from tools import book_pickleball_court, list_court_availabilities
+from remote_agent_conn import RemoteAgentConnections
+
+trace_provider = register(
+    space_id="U3BhY2U6MjM4OTI6WTNoVQ==",  # Found in app space settings page
+    api_key="ak-125b3b2a-60b4-43ed-8065-33e7199efe4d-wDG_vzN4qg8kM5RvubrXT9VXoEzFSqvs",  # Found in app space settings page
+    project_name="a2a-multi-agent",  # Name this whatever you prefer
+)
+
+GoogleADKInstrumentor().instrument(tracer_provider=trace_provider)
+
+APP_NAME = "google-adk"
+USER_ID = "devesh1011"
 
 load_dotenv()
 
@@ -241,4 +255,4 @@ def _get_initialized_host_agent_sync():
             raise
 
 
-root_agent = _get_initialized_host_agent_sync()
+_get_initialized_host_agent_sync()
